@@ -35,7 +35,6 @@ public class ArbolAVL<T extends Comparable<T>> {
             n = rotacionDerecha(n);
         }
 
-
         // Caso 2: Rotación izquierda, Derecha-Derecha (RR)
         if (n.getFe() < -1 && elemento.compareTo(n.getDerecha().getElemento()) > 0) {
             System.out.println("Se ejecuta una rotación izquierda");
@@ -138,49 +137,74 @@ public class ArbolAVL<T extends Comparable<T>> {
 
     }
 
-    // Calcular y actualizar el factor de equilibrio
     private void actualizarFE(Nodo<T> n) {
         if (n == null) return;
 
         n.setFe(altura(n.getIzquierda()) - altura(n.getDerecha()));
     }
 
-    // Actualizar altura
-    void actualizarAltura(Nodo<T> n) {
+    private void actualizarAltura(Nodo<T> n) {
         if (n == null) return;
 
         n.setAltura(Math.max(altura(n.getIzquierda()), altura(n.getDerecha())) + 1);
         actualizarFE(n);
     }
 
-    public void inOrden() {
+    public void print(String orden) {
         // Encabezado de la tabla
         System.out.println("╔════════╦═══════════════════╦═══════════════╦═══════════════╦═══════════════╗");
         System.out.println("║ Altura ║       Valor       ║    Balance    ║   Izquierdo   ║    Derecho    ║");
         System.out.println("╠════════╬═══════════════════╬═══════════════╬═══════════════╬═══════════════╣");
 
-        inOrden(raiz);
+        switch (orden.toLowerCase()) {
+            case "inorder":
+                inOrder(raiz);
+                break;
+            case "preorder":
+                preOrder(raiz);
+                break;
+            case "postorder":
+                postOrder(raiz);
+                break;
+            default:
+                System.out.println("Orden no válido. Usa 'inOrder', 'preOrder' o 'postOrder'.");
+        }
 
         // Línea final de la tabla
         System.out.println("╚════════╩═══════════════════╩═══════════════╩═══════════════╩═══════════════╝");
     }
 
-    private void inOrden(Nodo<T> nodo) {
+    private void preOrder(Nodo<T> nodo) {
         if (nodo != null) {
-            // Recursión en el subárbol izquierdo
-            inOrden(nodo.getIzquierda());
-
-            // Imprimir cada fila de la tabla con la altura del nodo
-            System.out.printf("║   %-4d ║         %-9s ║       %-7s ║     %-9s ║     %-9s ║%n",
-                    nodo.getAltura(),
-                    nodo.getElemento() instanceof Number && ((Number) nodo.getElemento()).doubleValue() < 0 ? " " + nodo.getElemento() : nodo.getElemento(),
-                    nodo.getFe() < 0 ? nodo.getFe() :  " " + nodo.getFe(),
-                    nodo.getIzquierda() != null ? (" " + nodo.getIzquierda().getElemento()) : "null",
-                    nodo.getDerecha() != null ? (" " + nodo.getDerecha().getElemento()) : "null");
-
-            // Recursión en el subárbol derecho
-            inOrden(nodo.getDerecha());
+            imprimirNodo(nodo);
+            preOrder(nodo.getIzquierda());
+            preOrder(nodo.getDerecha());
         }
+    }
+    private void inOrder(Nodo<T> nodo) {
+        if (nodo != null) {
+            inOrder(nodo.getIzquierda());
+            imprimirNodo(nodo);
+            inOrder(nodo.getDerecha());
+        }
+    }
+
+
+    private void postOrder(Nodo<T> nodo) {
+        if (nodo != null) {
+            postOrder(nodo.getIzquierda());
+            postOrder(nodo.getDerecha());
+            imprimirNodo(nodo);
+        }
+    }
+
+    private void imprimirNodo(Nodo<T> nodo) {
+        System.out.printf("║   %-4d ║         %-9s ║       %-7s ║     %-9s ║     %-9s ║%n",
+                nodo.getAltura(),
+                nodo.getElemento() instanceof Number && ((Number) nodo.getElemento()).doubleValue() < 0 ? " " + nodo.getElemento() : nodo.getElemento(),
+                nodo.getFe() < 0 ? nodo.getFe() :  " " + nodo.getFe(),
+                nodo.getIzquierda() != null ? (" " + nodo.getIzquierda().getElemento()) : "null",
+                nodo.getDerecha() != null ? (" " + nodo.getDerecha().getElemento()) : "null");
     }
 
 
